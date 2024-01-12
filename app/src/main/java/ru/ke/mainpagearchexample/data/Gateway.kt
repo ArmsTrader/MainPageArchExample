@@ -19,7 +19,20 @@ class Gateway {
 
     private fun bannerCarousel() =
         Element.BannersBlockModel(
-            emptyList()  // todo
+            listOf(
+                Element.BannersBlockModel.Banner(
+                    imageUrl = "",
+                    deeplink = "",
+                ),
+                Element.BannersBlockModel.Banner(
+                    imageUrl = "",
+                    deeplink = "",
+                ),
+                Element.BannersBlockModel.Banner(
+                    imageUrl = "",
+                    deeplink = "",
+                ),
+            )
         )
 
     private fun popularCategories() =

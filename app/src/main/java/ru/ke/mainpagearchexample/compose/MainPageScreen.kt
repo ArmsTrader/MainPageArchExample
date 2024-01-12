@@ -24,11 +24,26 @@ import ru.ke.mainpagearchexample.models.Element
 // TODO must be in DI
 // ------------ //
 val navigation = Navigation()
-val itemsDelegates: Map<Class<out Element>,  ItemComposeDelegate<out Element>> = mapOf(
-    Element.BannersBlockModel::class.java to BannersCarouselComposeDelegate(navigation)
+val itemsDelegates: Map<Class<out Element>, ItemComposeDelegate<out Element>> = mapOf(
+    Element.BannersBlockModel::class.java to BannersCarouselComposeDelegate(navigation),
+    Element.InlineBannerModel::class.java to BannersCarouselComposeDelegate(navigation)
 )
 // ------------ //
 
+//class Manager {
+//
+//    val itemsDelegates: MutableMap<Class<out Element>, ItemComposeDelegate<out Element>> = mutableMapOf()
+//
+//    inline fun <reified E: Element> registerDelegate(elementClass: Class<E>, delegate: ItemComposeDelegate<E>) {
+//        itemsDelegates[elementClass] = delegate
+//    }
+//
+//    @Composable
+//    inline fun <reified E: Element> smth(element: E ) {
+//        (itemsDelegates[element.javaClass] as?  ItemComposeDelegate<E>)
+//            ?.Content(element = element)
+//    }
+//}
 
 @Composable
 internal fun MainPageScreen(
@@ -60,7 +75,8 @@ private fun Content(
         item {
             topItems.forEach { item ->
                 val delegate = itemsDelegates[item.javaClass]
-                    delegate?.Content(element = item)
+                (delegate as? ItemComposeDelegate<Element>)
+                    ?.Content(element = item)
             }
         }
 

@@ -36,6 +36,7 @@ class BannersCarouselComposeDelegate(
         items: List<Element.BannersBlockModel.Banner>,
         itemClicked: (Element.BannersBlockModel.Banner) -> Unit,
     ) {
+        // needs to bee infinite scroll pager
         val pagerState = rememberPagerState(initialPage = 0) { items.size }
 
         fun currentItem(): Element.BannersBlockModel.Banner =
@@ -61,4 +62,5 @@ class BannersCarouselComposeDelegate(
             )
         }
     }
+
 }
