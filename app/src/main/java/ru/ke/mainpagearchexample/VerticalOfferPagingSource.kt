@@ -10,7 +10,7 @@ internal class VerticalOfferPagingSource(
     private val gateway: Gateway,
 ) : PagingSource<Int, Element.VerticalOfferElement>() {
 
-    private var offsetSize: Int = 0
+    private var offsetSize: Int = 2
 
     override fun getRefreshKey(state: PagingState<Int, Element.VerticalOfferElement>): Int? =
         state.anchorPosition?.let {
@@ -20,15 +20,22 @@ internal class VerticalOfferPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Element.VerticalOfferElement> {
         val offset = params.key ?: 0
-        return try {
-            val items: List<Element.VerticalOfferElement> = gateway.verticalOfferElements(offerId, offset)
-            offsetSize = items.size
-            val nextKey = if (items.isNotEmpty()) offset + offsetSize else null
-            val prevKey = params.key?.let { it - offsetSize }
+        try {
+            val prevKey = params.key
+                ?.let { it - offsetSize }
+                ?.takeIf { it >= 0 }
 
-            LoadResult.Page(items, prevKey, nextKey)
+            val items: List<Element.VerticalOfferElement>? =
+                gateway.verticalOfferElements(offerId, offset / offsetSize)
+
+            if (items.isNullOrEmpty()) {
+                return LoadResult.Page(emptyList(), prevKey, null)
+            }
+            val nextKey = if (items.isNotEmpty()) offset + offsetSize else null
+
+            return LoadResult.Page(items, prevKey, nextKey)
         } catch (e: Exception) {
-            LoadResult.Error(e)
+            return LoadResult.Error(e)
         }
     }
 

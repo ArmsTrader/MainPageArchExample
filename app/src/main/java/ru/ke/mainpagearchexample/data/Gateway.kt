@@ -9,26 +9,55 @@ class Gateway {
         listOf(
             bannerCarousel(),
             popularCategories(),
+            inlineBanner(),
             verticalOffers(),
         )
 
-    fun verticalOfferElements(offerId: Long, page: Int): List<Element.VerticalOfferElement> =
+    fun verticalOfferElements(
+        offerId: Long,
+        page: Int
+    ): List<Element.VerticalOfferElement>? =
+        when (page) {
+            0 -> page0()
+            1 -> page1()
+            else -> null
+        }
+
+    private fun page0(): List<Element.VerticalOfferElement> =
+        listOf(inlineBanner()) + productBlock()
+
+    private fun page1(): List<Element.VerticalOfferElement> =
+        listOf(inlineBanner()) + productBlock()
+
+    private fun productBlock(): List<Element.VerticalOfferElement> =
         listOf(
-            inlineBanner()
+            Element.ProductsBlockModel(
+                products = listOf(
+                    randomProduct(),
+                    randomProduct(),
+                    randomProduct(),
+                    randomProduct(),
+                    randomProduct(),
+                    randomProduct(),
+                )
+            )
         )
 
     private fun bannerCarousel() =
         Element.BannersBlockModel(
             listOf(
                 Element.BannersBlockModel.Banner(
+                    id = 0,
                     imageUrl = "",
                     deeplink = "",
                 ),
                 Element.BannersBlockModel.Banner(
+                    id = 1,
                     imageUrl = "",
                     deeplink = "",
                 ),
                 Element.BannersBlockModel.Banner(
+                    id = 2,
                     imageUrl = "",
                     deeplink = "",
                 ),
@@ -78,7 +107,7 @@ class Gateway {
             offers = listOf(
                 Element.VerticalOffersBlocks.VerticalOffer(
                     id = 0,
-                    title = "Рекомендуем"
+                    title = "Новый год"
                 ),
                 Element.VerticalOffersBlocks.VerticalOffer(
                     id = 1,
@@ -92,17 +121,18 @@ class Gateway {
         )
 
     private fun inlineBanner() = Element.InlineBannerModel(
+        id = (0..1000L).random(),
         imageUrl = "",
         deeplink = "",
     )
 
-    private fun product() = Element.ProductBlockModel(
-        product = Product(
-            id = 0,
+    private fun randomProduct() =
+        Product(
+            id = (0..1000L).random(),
             title = randomProductTitle(),
             imageUrl = randomProductImage()
         )
-    )
+
 
     private fun randomProductTitle(): String = "" // todo
     private fun randomProductImage(): String = "" // todo

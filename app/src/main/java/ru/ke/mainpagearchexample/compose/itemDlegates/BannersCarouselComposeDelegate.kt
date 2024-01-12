@@ -1,21 +1,25 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package ru.ke.mainpagearchexample.compose
+package ru.ke.mainpagearchexample.compose.itemDlegates
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import ru.ke.mainpagearchexample.Navigation
+import ru.ke.mainpagearchexample.compose.ItemComposeDelegate
 import ru.ke.mainpagearchexample.models.Element
 
 class BannersCarouselComposeDelegate(
@@ -36,13 +40,15 @@ class BannersCarouselComposeDelegate(
         items: List<Element.BannersBlockModel.Banner>,
         itemClicked: (Element.BannersBlockModel.Banner) -> Unit,
     ) {
-        // needs to bee infinite scroll pager
-        val pagerState = rememberPagerState(initialPage = 0) { items.size }
+        val pageCount = Int.MAX_VALUE
+        val pagerState = rememberPagerState(initialPage = pageCount / 2) { pageCount }
+
+        fun item(page: Int): Element.BannersBlockModel.Banner =
+            items[page % items.size]
 
         fun currentItem(): Element.BannersBlockModel.Banner =
-            items[pagerState.settledPage % items.size]
+            item(pagerState.settledPage)
 
-        // must be pager with infinite scroll. see ProductPhotosGallery
         HorizontalPager(
             state = pagerState,
             contentPadding = PaddingValues(20.dp),
@@ -52,14 +58,23 @@ class BannersCarouselComposeDelegate(
                 .clickable {
                     itemClicked(currentItem())
                 },
-        ) {
-            val item = currentItem()
-            AsyncImage(
-                model = item.deeplink,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
+        ) { page ->
+            val item = item(page)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(
+                        width = 1.dp,
+                        color = Color.Black
+                    )
             )
+            {
+                Text(
+                    text = item.id.toString(),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
         }
     }
 

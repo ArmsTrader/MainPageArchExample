@@ -19,6 +19,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.Flow
 import ru.ke.mainpagearchexample.MainPageViewModel
 import ru.ke.mainpagearchexample.Navigation
+import ru.ke.mainpagearchexample.compose.itemDlegates.BannersCarouselComposeDelegate
+import ru.ke.mainpagearchexample.compose.itemDlegates.InlineBannerComposeDelegate
+import ru.ke.mainpagearchexample.compose.itemDlegates.PopularCategoriesComposeDelegate
+import ru.ke.mainpagearchexample.compose.itemDlegates.ProductsBlockComposeDelegate
 import ru.ke.mainpagearchexample.models.Element
 
 // TODO must be in DI
@@ -26,24 +30,11 @@ import ru.ke.mainpagearchexample.models.Element
 val navigation = Navigation()
 val itemsDelegates: Map<Class<out Element>, ItemComposeDelegate<out Element>> = mapOf(
     Element.BannersBlockModel::class.java to BannersCarouselComposeDelegate(navigation),
-    Element.InlineBannerModel::class.java to BannersCarouselComposeDelegate(navigation)
+    Element.InlineBannerModel::class.java to InlineBannerComposeDelegate(navigation),
+    Element.ProductsBlockModel::class.java to ProductsBlockComposeDelegate(),
+    Element.PopularCategoriesBlock::class.java to PopularCategoriesComposeDelegate(),
 )
 // ------------ //
-
-//class Manager {
-//
-//    val itemsDelegates: MutableMap<Class<out Element>, ItemComposeDelegate<out Element>> = mutableMapOf()
-//
-//    inline fun <reified E: Element> registerDelegate(elementClass: Class<E>, delegate: ItemComposeDelegate<E>) {
-//        itemsDelegates[elementClass] = delegate
-//    }
-//
-//    @Composable
-//    inline fun <reified E: Element> smth(element: E ) {
-//        (itemsDelegates[element.javaClass] as?  ItemComposeDelegate<E>)
-//            ?.Content(element = element)
-//    }
-//}
 
 @Composable
 internal fun MainPageScreen(
@@ -111,7 +102,10 @@ fun LazyListScope.VerticalOffers(
     items: LazyPagingItems<Element.VerticalOfferElement>,
 ) {
     items(count = items.itemCount) { index ->
-
+        val item = items[index]!!
+        val delegate = itemsDelegates[item.javaClass]
+        (delegate as? ItemComposeDelegate<Element>)
+            ?.Content(element = item)
     }
 }
 

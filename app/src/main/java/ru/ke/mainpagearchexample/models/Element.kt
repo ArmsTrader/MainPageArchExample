@@ -1,5 +1,6 @@
 package ru.ke.mainpagearchexample.models
 
+
 /**
  * Main page block
  */
@@ -12,12 +13,14 @@ interface Element {
         val banners: List<Banner>
     ) : MainPageElement {
         class Banner(
+            val id: Long,
             val imageUrl: String,
             val deeplink: String,
         )
     }
 
     class InlineBannerModel(
+        val id: Long,
         val imageUrl: String,
         val deeplink: String,
     ) : MainPageElement, VerticalOfferElement
@@ -28,6 +31,7 @@ interface Element {
         val categories: List<Category>
     ) : MainPageElement, VerticalOfferElement {
         class Category(
+            val id: Long = (0..1000L).random(),
             val title: String,
             val image: String,
             val deeplink: String
@@ -43,8 +47,8 @@ interface Element {
         )
     }
 
-    class ProductBlockModel(
-        val product: Product
+    class ProductsBlockModel(
+        val products: List<Product>
     ) : VerticalOfferElement
 
 }
